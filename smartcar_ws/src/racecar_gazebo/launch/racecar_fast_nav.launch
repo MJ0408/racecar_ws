@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Launch the racecar -->
+  <include file="$(find racecar_gazebo)/launch/racecar.launch">
+  <arg name="world_name" value="racetrack"/>
+  </include>
+ 
+  <!-- Launch the built-map -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find racecar_gazebo)/map/mymap3.yaml" />
+
+
+  <!--Launch the move base with time elastic band-->
+  <param name="/use_sim_time" value="true"/>
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find racecar_gazebo)/config/fast/costmap_common_fast_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find racecar_gazebo)/config//fast/costmap_common_fast_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find racecar_gazebo)/config/fast/local_costmap_fast_params.yaml" command="load" />
+    <rosparam file="$(find racecar_gazebo)/config/fast/global_costmap_fast_params.yaml" command="load" />
+    <rosparam file="$(find racecar_gazebo)/config//fast/teb_local_planner_fast_params.yaml" command="load" />
+
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="planner_frequency" value="1.0" />
+    <param name="planner_patience" value="5.0" />
+    <!--param name="use_dijkstra" value="true" /-->
+
+    <!--震荡-->
+    <!--param name="oscillation_timeout" value="10.0" />
+    <param name="oscillation_distance" value="0.2"/!-->  
+    <!--采用twa规划器插件-->
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="7.0" />
+    <param name="controller_patience" value="15.0" />
+     
+     <!--# 清除旋转允许-->
+    <param name="clearing_rotation_allowed" value="false" />
+  </node>
+    
+
+</launch>

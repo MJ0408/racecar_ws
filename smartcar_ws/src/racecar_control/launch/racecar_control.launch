@@ -1,0 +1,38 @@
+<?xml version='1.0'?>
+
+<launch>
+
+  <arg name="use_zijide" default="true" />
+  <!-- 下载关节传动参数  -->
+  <rosparam file="$(find racecar_control)/config/racecar_control.yaml" command="load"/>
+
+  <!-- 下载关节传动节点 -->
+  <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="/racecar" args="left_rear_wheel_velocity_controller right_rear_wheel_velocity_controller
+                                            left_front_wheel_velocity_controller right_front_wheel_velocity_controller
+                                            left_steering_hinge_position_controller right_steering_hinge_position_controller
+                                            joint_state_controller"/>
+
+  <!-- tf 关节 静态节点发布 -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+    <remap from="/joint_states" to="/racecar/joint_states" />
+  </node>
+
+  <!-- 小车速度控制中间服务节点 --> 
+   <group if="$(arg use_zijide)">
+  <node pkg="racecar_control" type="racecar_control" name= "racecar_control" output="screen">
+     <remap from="/racecar/ackermann_cmd_mux/output" to="/vesc/low_level/ackermann_cmd_mux/output"/>
+  </node>
+   </group>
+  
+    <!-- Spawn the MUXs 速度控制参数 -->
+  <arg name="racecar_version" default="racecar-v2" />
+  <include file="$(find racecar)/launch/mux.launch" ns="vesc" />
+
+  
+  
+ <node pkg="racecar_control" type="echo_odom" name= "echo_odom" output="screen"/>
+   <!-- 发布 "better odom" 主题 通常由最好消息滤波产生  -->
+  <!--node name="better_odom" pkg="topic_tools" type="relay"
+          args="/odom_ekf /odom" /-->
+</launch>

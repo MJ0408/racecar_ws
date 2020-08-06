@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+      
+	
+<arg name="model" default="$(find xacro)/xacro --inorder '$(find racecar_description)/urdf/racecar.urdf.xacro'" />
+
+        <param name="robot_description" command="$(arg model)" />
+	<!-- 运行robot_state_publisher节点，发布tf  -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	
+
+    <!-- Read joint positions from a GUI, then publish them to joint_states. -->
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui"
+          type="joint_state_publisher_gui">
+        <param name="rate" value="30"/>
+        <param name="use_gui" value="true"/>
+    </node>
+
+    <node name="rviz" pkg="rviz" type="rviz"
+          args="-d $(find racecar_description)/rviz/racecar_urdf.rviz" required="true"/>
+</launch>

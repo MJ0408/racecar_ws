@@ -1,0 +1,33 @@
+
+#---standard pioneer footprint---
+#---(in meters)---
+#footprint: [ [0.254, -0.0508], [0.1778, -0.0508], [0.1778, -0.1778], [-0.1905, -0.1778], [-0.254, 0], [-0.1905, 0.1778], [0.1778, 0.1778], [0.1778, 0.0508], [0.254, 0.0508] ]
+#footprint: [ [0.2405,0.1969], [-0.2405,0.1969], [-0.2405,-0.1969], [0.2405,-0.1969] ]
+#footprint: [ [0.27,0.27], [-0.27,0.27], [-0.27,-0.20], [0.27,-0.20] ]
+footprint:  [ [0.25,0.2], [0.25,-0.2], [0,-0.2], [-0.25,-0.2], [-0.25,0.2], [0,0.2] ]
+
+transform_tolerance: 0.2
+map_type: costmap
+
+#障碍区设置
+obstacle_layer:
+ enabled: true
+ obstacle_range: 6.0  ##决定了多远的距离以内被当成是障碍显示在local costmap里面
+ raytrace_range: 6.5  # 用来设置机器人检测自由空间的最大范围，设置为3.0意为在3米范围内，机器人将根据传感器的信息，清除范围内的自由空间
+ inflation_radius: 0.1  #膨胀半径
+ track_unknown_space: false
+ combination_method: 1
+
+ observation_sources: laser_scan_sensor
+ laser_scan_sensor: {data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+#膨胀层 参数 不用改
+inflation_layer:
+  enabled:              true
+  cost_scaling_factor:  10.0  # exponential rate at which the obstacle cost drops off (default: 10)
+  inflation_radius:     0.3  # max. distance from an obstacle at which costs are incurred for planning paths.
+
+#静态层参数  
+static_layer:
+  enabled:              true
+  map_topic:            "/map"

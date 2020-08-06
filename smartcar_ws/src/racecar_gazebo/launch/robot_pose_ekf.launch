@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+
+    <arg name="odom_topic" default="/odom_rf2o" />
+    <arg name="odom_topic1" default="/echo_odom" />
+<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="robot_pose_ekf">
+    <!-- 
+    freq：滤波器更新和发布频率（注意：较高的频率仅仅意味着一段时间可以获得更多机器人位姿信息，但是并不可以提高每次位姿估计的精度）
+    sensor_timeout：当传感器停止向滤波器发送信息时，滤波器在没有传感器的情况下等待多长时间才重新开始工作
+    odom_used, imu_used, vo_used：确认是否输入
+-->
+  <param name="output_frame" value="modom"/>
+  <param name="base_footprint_frame" value="base_footprint"/>
+  
+  <param name="freq" value="100.0"/>
+  <param name="sensor_timeout" value="1.0"/>  
+  <!--inpput sensor_msgs-->
+  <param name="odom_used" value="true"/>
+  <param name="imu_used" value="true"/>
+  <param name="vo_used" value="false"/>
+
+  <remap from="odom" to="$(arg odom_topic1)" />
+  <remap from="/imu_data" to="/imu_data" />
+
+</node>
+
+</launch>
